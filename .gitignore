@@ -36,3 +36,6 @@ Thumbs.db
 .superpowers/
 docs/
 .superpowers/
+
+# Private data
+data/

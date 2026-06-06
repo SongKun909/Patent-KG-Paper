@@ -1,4 +1,6 @@
 """Main pipeline orchestrating the full extraction workflow."""
+import logging
+from pathlib import Path
 from typing import List, Optional
 
 from config import PipelineConfig, load_config
@@ -11,9 +13,11 @@ from agents.state import AgentState
 from models.quintuple import IndicatorSentence, Quintuple
 from eval.f1_star import compute_f1_star, F1StarResult
 
+logger = logging.getLogger(__name__)
+
 
 class ExtractionPipeline:
-    """Complete three-layer funnel → multi-agent extraction pipeline."""
+    """Complete PDF→three-layer funnel→multi-agent extraction pipeline."""
 
     def __init__(self, config: Optional[PipelineConfig] = None):
         self.config = config or load_config()
@@ -29,6 +33,7 @@ class ExtractionPipeline:
         self.mapper = UDToQuintupleMapper()
         self.graph = build_pipeline_graph(self.llm)
         self._classifier = None  # Lazy load Layer 2
+        self._pdf_parser = None  # Lazy load PDF parser
 
     def filter_sentences(self, text: str, lang: str = "zh"):
         """Layer 1: Regex-based filtering."""
@@ -87,6 +92,87 @@ class ExtractionPipeline:
 
         result = self.graph.invoke(initial_state)
         return result.get("final_quintuples", [])
+
+    @property
+    def pdf_parser(self):
+        if self._pdf_parser is None:
+            from preprocessing.pdf_parser import PatentPDFParser
+
+            self._pdf_parser = PatentPDFParser(ocr_enabled=True)
+        return self._pdf_parser
+
+    def run_from_pdf(
+        self, pdf_path: str
+    ) -> List[Quintuple]:
+        """Run full pipeline from a patent PDF file.
+
+        Args:
+            pdf_path: Path to a patent PDF file (CN or US).
+
+        Returns:
+            List of extracted Quintuple objects.
+        """
+        if not Path(pdf_path).exists():
+            logger.error(f"PDF not found: {pdf_path}")
+            return []
+
+        # Step 0: Parse PDF → full text
+        logger.info(f"Parsing PDF: {pdf_path}")
+        parsed = self.pdf_parser.parse(pdf_path)
+        text = parsed["full_text"]
+        lang = parsed["language"]
+
+        if not text:
+            logger.warning(f"No text extracted from {pdf_path}")
+            return []
+
+        filename = Path(pdf_path).stem
+        patent_id = parsed["metadata"].get("application_number", filename)
+
+        logger.info(
+            f"Extracted {len(text)} chars from {parsed['page_count']} pages "
+            f"({parsed['scanned_pages']} scanned), lang={lang}"
+        )
+
+        return self.run(text, lang, patent_id)
+
+    def run_batch_from_directory(
+        self, directory: str, limit: int = 0
+    ) -> List[dict]:
+        """Run pipeline on all PDFs in a directory.
+
+        Returns:
+            List of {filename, metadata, quintuples} dicts.
+        """
+        import os
+
+        results = []
+        pdf_files = sorted(
+            f for f in os.listdir(directory) if f.lower().endswith(".pdf")
+        )
+        if limit:
+            pdf_files = pdf_files[:limit]
+
+        for i, filename in enumerate(pdf_files):
+            pdf_path = os.path.join(directory, filename)
+            logger.info(f"[{i+1}/{len(pdf_files)}] Processing {filename}")
+            try:
+                quints = self.run_from_pdf(pdf_path)
+                results.append({
+                    "filename": filename,
+                    "quintuples": [q.to_dict() for q in quints],
+                    "count": len(quints),
+                })
+            except Exception as e:
+                logger.error(f"Failed {filename}: {e}")
+                results.append({
+                    "filename": filename,
+                    "quintuples": [],
+                    "count": 0,
+                    "error": str(e),
+                })
+
+        return results
 
     def evaluate(
         self,
