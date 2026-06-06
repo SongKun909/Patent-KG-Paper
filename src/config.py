@@ -70,10 +70,7 @@ def load_config(config_path: Optional[str] = None) -> PipelineConfig:
 
     return PipelineConfig(
         llm=LLMConfig(
-            api_key=os.environ.get(
-                "ANTHROPIC_AUTH_TOKEN",
-                "REDACTED_API_KEY",
-            ),
+            api_key=os.environ.get("ANTHROPIC_AUTH_TOKEN", ""),
             base_url=os.environ.get(
                 "ANTHROPIC_BASE_URL",
                 "https://api.deepseek.com/anthropic",

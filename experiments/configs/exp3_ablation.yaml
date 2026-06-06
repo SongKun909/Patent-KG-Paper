@@ -1,0 +1,33 @@
+# Experiment 3: Ablation Study
+experiment:
+  name: "exp3_ablation"
+  description: "Ablation study to measure contribution of each component"
+
+groups:
+  - id: "3a_full"
+    name: "Full Pipeline (E-V-I + Syntax)"
+    mode: "full_pipeline"
+    syntax_enabled: true
+    agents_enabled: true
+    verify_enabled: true
+
+  - id: "3b_no_verify"
+    name: "Ablation: Remove Verify Agent"
+    mode: "full_pipeline"
+    syntax_enabled: true
+    agents_enabled: true
+    verify_enabled: false
+
+  - id: "3c_no_syntax"
+    name: "Ablation: Remove Syntactic Constraints"
+    mode: "full_pipeline"
+    syntax_enabled: false
+    agents_enabled: true
+    verify_enabled: true
+
+  - id: "3d_no_both"
+    name: "Ablation: Remove Both (Pure Extract)"
+    mode: "full_pipeline"
+    syntax_enabled: false
+    agents_enabled: false
+    verify_enabled: false

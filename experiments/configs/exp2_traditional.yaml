@@ -1,0 +1,23 @@
+# Experiment 2: Our Method vs Traditional Baselines
+experiment:
+  name: "exp2_traditional"
+  description: "Compare against rule-based and BERT-CRF baselines"
+
+groups:
+  - id: "2a_rule"
+    name: "Rule + Keyword Matching"
+    mode: "rule_baseline"
+    syntax_enabled: false
+    agents_enabled: false
+
+  - id: "2b_bert_crf"
+    name: "BERT-BiLSTM-CRF"
+    mode: "bert_crf"
+    syntax_enabled: false
+    agents_enabled: false
+
+  - id: "2c_ours"
+    name: "Ours: Multi-Agent + Syntactic Constraints"
+    mode: "full_pipeline"
+    syntax_enabled: true
+    agents_enabled: true

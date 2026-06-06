@@ -1,0 +1,33 @@
+# Experiment 1: Multi-Agent vs Single LLM
+experiment:
+  name: "exp1_llm_comparison"
+  description: "Compare multi-agent pipeline against single LLM baselines"
+
+groups:
+  - id: "1a_zero_shot"
+    name: "Single LLM Zero-Shot"
+    mode: "single_llm"
+    shots: 0
+    syntax_enabled: false
+    agents_enabled: false
+
+  - id: "1b_few_shot"
+    name: "Single LLM 3-Shot ICL"
+    mode: "single_llm"
+    shots: 3
+    syntax_enabled: false
+    agents_enabled: false
+
+  - id: "1c_sft"
+    name: "Qwen2.5-7B Battery Expert (SFT)"
+    mode: "sft_model"
+    model_path: "SongKun909/Qwen2.5-7B-Battery-Expert-LoRA"
+    syntax_enabled: false
+    agents_enabled: false
+
+  - id: "1d_ours"
+    name: "Ours: Multi-Agent + Syntactic Constraints"
+    mode: "full_pipeline"
+    syntax_enabled: true
+    agents_enabled: true
+    max_retries: 2

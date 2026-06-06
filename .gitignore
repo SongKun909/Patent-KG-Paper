@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Experiments
+experiments/results/
+output/
+
+# Models (large files)
+models/*.bin
+models/*.pth
+models/*.pt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Superpowers
+.superpowers/

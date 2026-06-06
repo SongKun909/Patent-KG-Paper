@@ -22,8 +22,7 @@ class DeepSeekLLM(BaseLLM):
         max_tokens: int = 4096,
     ):
         self.api_key = api_key or os.environ.get(
-            "ANTHROPIC_AUTH_TOKEN",
-            "REDACTED_API_KEY",
+            "ANTHROPIC_AUTH_TOKEN", ""
         )
         self.base_url = base_url or os.environ.get(
             "ANTHROPIC_BASE_URL",

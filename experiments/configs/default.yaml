@@ -1,0 +1,35 @@
+# Default experiment configuration
+experiment:
+  name: "default"
+  description: "Default pipeline run"
+
+dataset:
+  path: "SongKun909/Lithium-Battery-IE-Dataset"
+  split:
+    train_ratio: 0.70
+    val_ratio: 0.15
+    test_ratio: 0.15
+    seed: 42
+
+llm:
+  provider: "deepseek"
+  model: "deepseek-v4-pro[1m]"
+  temperature: 0.1
+  max_tokens: 4096
+
+agents:
+  max_retries: 2
+  chunk_size: 1000
+  verify_dimensions:
+    - "physical_boundary"
+    - "logical_consistency"
+    - "syntactic_completeness"
+
+filter:
+  regex_enabled: true
+  classifier_enabled: false
+  classifier_threshold: 0.5
+  syntax_enabled: true
+
+output:
+  dir: "experiments/results"
