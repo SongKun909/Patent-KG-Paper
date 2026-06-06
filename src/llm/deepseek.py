@@ -1,9 +1,9 @@
-"""DeepSeek provider via Anthropic-compatible API."""
+"""DeepSeek provider via Anthropic-compatible API using requests."""
 import json
 import os
 from typing import List, Optional
 
-from openai import OpenAI
+import requests
 
 from models.quintuple import Quintuple
 from prompts.templates import EXTRACT_SYSTEM_PROMPT, build_extract_prompt
@@ -33,22 +33,43 @@ class DeepSeekLLM(BaseLLM):
         )
         self.temperature = temperature
         self.max_tokens = max_tokens
-        self.client = OpenAI(
-            api_key=self.api_key,
-            base_url=self.base_url,
-        )
+        self._session = requests.Session()
+        self._session.headers.update({
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        })
 
     def generate(self, system_prompt: str, user_message: str) -> str:
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=[
+        """Send a chat completion request and return the text response."""
+        payload = {
+            "model": self.model,
+            "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_message},
             ],
-            temperature=self.temperature,
-            max_tokens=self.max_tokens,
-        )
-        return response.choices[0].message.content or ""
+            "temperature": self.temperature,
+            "max_tokens": self.max_tokens,
+        }
+        try:
+            resp = self._session.post(
+                f"{self.base_url}/v1/messages",
+                json=payload,
+                timeout=120,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            # Anthropic format: content[0].text
+            content = data.get("content", [])
+            if content and isinstance(content, list):
+                return content[0].get("text", "")
+            # OpenAI format fallback: choices[0].message.content
+            choices = data.get("choices", [])
+            if choices:
+                return choices[0].get("message", {}).get("content", "")
+            return ""
+        except requests.RequestException as e:
+            print(f"[DeepSeekLLM] API error: {e}")
+            return ""
 
     def extract_quintuples(
         self,
