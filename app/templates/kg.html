@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Knowledge Graph — Patent-KG{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-bold mb-6">Knowledge Graph</h1>
+
+<div class="bg-gray-800 p-4 rounded-lg mb-6">
+    <div class="flex gap-4 mb-4">
+        <input type="text" name="keyword" placeholder="Search indicators..."
+               hx-get="/api/kg/search" hx-trigger="keyup changed delay:500ms"
+               hx-target="#kgSearchResult"
+               class="p-2 rounded bg-gray-700 border border-gray-600 flex-1">
+    </div>
+    <div id="kgSearchResult"></div>
+</div>
+
+<!-- Graph Viewer -->
+<div class="bg-gray-800 p-4 rounded-lg mb-6">
+    <h2 class="text-lg font-semibold mb-3">Interactive Graph</h2>
+    <div hx-get="/api/kg/visualize?limit=50" hx-trigger="load" hx-target="#graphContainer">
+        <div id="graphContainer" class="text-gray-400">Loading graph...</div>
+    </div>
+</div>
+
+<!-- PageRank + Pearson panels -->
+<div class="grid grid-cols-2 gap-6">
+    <div class="bg-gray-800 p-4 rounded-lg" hx-get="/api/kg/pagerank" hx-trigger="load">
+        <h2 class="text-lg font-semibold mb-3">Top Indicators (PageRank)</h2>
+        <p class="text-gray-400">Loading...</p>
+    </div>
+    <div class="bg-gray-800 p-4 rounded-lg" hx-get="/api/kg/pearson" hx-trigger="load">
+        <h2 class="text-lg font-semibold mb-3">Indicator Correlations (Pearson)</h2>
+        <p class="text-gray-400">Loading...</p>
+    </div>
+</div>
+{% endblock %}

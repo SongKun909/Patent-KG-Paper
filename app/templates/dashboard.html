@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Patent-KG{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-bold mb-6">Dashboard</h1>
+<div class="grid grid-cols-4 gap-4 mb-8">
+    <div class="bg-gray-800 p-4 rounded-lg text-center">
+        <div class="text-3xl font-bold text-blue-400" id="statPatents">—</div>
+        <div class="text-sm text-gray-400">Total Patents</div>
+    </div>
+    <div class="bg-gray-800 p-4 rounded-lg text-center">
+        <div class="text-3xl font-bold text-green-400" id="statCompleted">—</div>
+        <div class="text-sm text-gray-400">Completed Tasks</div>
+    </div>
+    <div class="bg-gray-800 p-4 rounded-lg text-center">
+        <div class="text-3xl font-bold text-yellow-400" id="statRunning">—</div>
+        <div class="text-sm text-gray-400">Running</div>
+    </div>
+    <div class="bg-gray-800 p-4 rounded-lg text-center">
+        <div class="text-3xl font-bold text-purple-400" id="statQuintuples">—</div>
+        <div class="text-sm text-gray-400">Quintuples Extracted</div>
+    </div>
+</div>
+
+<div class="grid grid-cols-2 gap-6">
+    <div class="bg-gray-800 p-4 rounded-lg">
+        <h2 class="text-lg font-semibold mb-3">Quick Actions</h2>
+        <div class="space-y-2">
+            <a href="/patents" class="block p-3 bg-blue-600 hover:bg-blue-700 rounded text-center">Upload Patent PDF</a>
+            <a href="/tasks" class="block p-3 bg-green-600 hover:bg-green-700 rounded text-center">View Tasks</a>
+            <a href="/results" class="block p-3 bg-purple-600 hover:bg-purple-700 rounded text-center">Browse Results</a>
+            <a href="/kg" class="block p-3 bg-orange-600 hover:bg-orange-700 rounded text-center">Knowledge Graph</a>
+        </div>
+    </div>
+    <div class="bg-gray-800 p-4 rounded-lg" hx-get="/api/tasks/" hx-trigger="every 10s">
+        <h2 class="text-lg font-semibold mb-3">Recent Tasks</h2>
+        <p class="text-gray-400 text-sm">Loading...</p>
+    </div>
+</div>
+{% endblock %}

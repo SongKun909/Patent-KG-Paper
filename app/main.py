@@ -1,8 +1,9 @@
 """FastAPI application entry point."""
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
 
 # Import all models so Base.metadata knows about them
 from app.models.base import Base
@@ -50,6 +51,40 @@ app.include_router(kg_router)
 app.include_router(ws_router)
 
 
+templates = Jinja2Templates(directory="app/templates")
+
+
 @app.get("/")
 async def root():
     return {"status": "ok", "app": "Patent-KG Platform"}
+
+
+# Page routes
+@app.get("/dashboard")
+async def dashboard(request: Request):
+    return templates.TemplateResponse("dashboard.html", {"request": request})
+
+
+@app.get("/login")
+async def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+
+@app.get("/patents")
+async def patents_page(request: Request):
+    return templates.TemplateResponse("patents.html", {"request": request})
+
+
+@app.get("/tasks")
+async def tasks_page(request: Request):
+    return templates.TemplateResponse("tasks.html", {"request": request})
+
+
+@app.get("/results")
+async def results_page(request: Request):
+    return templates.TemplateResponse("results.html", {"request": request})
+
+
+@app.get("/kg")
+async def kg_page(request: Request):
+    return templates.TemplateResponse("kg.html", {"request": request})
