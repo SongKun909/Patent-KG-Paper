@@ -7,45 +7,63 @@
 
 <div class="grid grid-cols-3 gap-6 mb-8">
     <!-- Upload -->
-    <div class="card p-5">
-        <h2 class="text-sm font-semibold text-slate-700 mb-4">上传专利</h2>
-        <form hx-post="/api/patents/upload" hx-encoding="multipart/form-data" hx-target="#uploadResult" hx-swap="afterbegin">
-            <div class="mb-4 p-5 border-2 border-dashed border-slate-200 rounded-lg text-center hover:border-blue-300 transition-colors cursor-pointer" onclick="this.querySelector('input').click()">
-                <input type="file" name="file" accept=".pdf" required class="hidden">
-                <svg class="w-6 h-6 text-slate-300 mx-auto mb-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"/></svg>
-                <p class="text-sm text-slate-400">点击选择 PDF 文件</p>
-            </div>
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium transition-colors">上传</button>
+    <div class="col-span-2 card p-6">
+        <h2 class="text-sm font-semibold text-slate-700 mb-4">上传专利 PDF</h2>
+        <form hx-post="/api/patents/upload" hx-encoding="multipart/form-data" hx-target="#uploadResult" hx-swap="innerHTML"
+              x-data="{ dragging: false, file: null, fileName: '' }"
+              @dragover.prevent="dragging = true"
+              @dragleave.prevent="dragging = false"
+              @drop.prevent="dragging = false; file = $event.dataTransfer.files[0]; fileName = file ? file.name : ''"
+              @change="$el.querySelector('input[type=file]').files[0] && (file = $el.querySelector('input[type=file]').files[0]; fileName = file.name)">
+            <input type="file" name="file" accept=".pdf" required class="hidden" id="fileInput"
+                   @change="fileName = $el.files[0]?.name || ''">
+            <label for="fileInput"
+                   :class="dragging ? 'border-blue-400 bg-blue-50' : 'border-slate-200 hover:border-slate-300'"
+                   class="flex flex-col items-center justify-center p-10 border-2 border-dashed rounded-lg cursor-pointer transition-colors">
+                <template x-if="!fileName">
+                    <div class="text-center">
+                        <svg class="w-10 h-10 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+                        <p class="text-sm text-slate-500">拖拽 PDF 文件到此处，或<span class="text-blue-600">点击选择</span></p>
+                        <p class="text-xs text-slate-400 mt-1">支持 .pdf 格式，单文件最大 50MB</p>
+                    </div>
+                </template>
+                <template x-if="fileName">
+                    <div class="text-center">
+                        <svg class="w-10 h-10 text-blue-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                        <p class="text-sm text-slate-700 font-medium" x-text="fileName"></p>
+                        <p class="text-xs text-slate-400 mt-1">点击可重新选择文件</p>
+                    </div>
+                </template>
+            </label>
+            <button type="submit" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white py-2.5 rounded-lg text-sm font-medium transition-colors"
+                    :disabled="!fileName">
+                上传文件
+            </button>
         </form>
-        <div id="uploadResult"></div>
+        <div id="uploadResult" class="mt-3 text-sm"></div>
     </div>
 
     <!-- Bulk Import -->
-    <div class="card p-5">
+    <div class="card p-6 flex flex-col">
         <h2 class="text-sm font-semibold text-slate-700 mb-4">批量导入</h2>
-        <form hx-post="/api/patents/import" hx-target="#importResult">
-            <label class="block text-xs text-slate-500 mb-1.5">服务器目录路径</label>
-            <input type="text" name="directory" placeholder="data/pdfs/CN" class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none transition-colors mb-4">
-            <button type="submit" class="w-full bg-slate-700 hover:bg-slate-800 text-white py-2 rounded-lg text-sm font-medium transition-colors">批量导入</button>
+        <p class="text-xs text-slate-400 mb-4">从服务器已有目录批量导入专利文件</p>
+        <form hx-post="/api/patents/import" hx-target="#importResult" class="flex-1 flex flex-col">
+            <label class="block text-xs text-slate-500 mb-1.5">目录路径</label>
+            <input type="text" name="directory" placeholder="data/pdfs/CN"
+                   class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none transition-colors mb-4">
+            <div class="mt-auto">
+                <button type="submit" class="w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 py-2 rounded-lg text-sm font-medium transition-colors">开始导入</button>
+            </div>
         </form>
         <div id="importResult" class="mt-3 text-sm"></div>
-    </div>
-
-    <!-- Summary -->
-    <div class="card p-5">
-        <h2 class="text-sm font-semibold text-slate-700 mb-4">概况</h2>
-        <div class="space-y-3 text-sm">
-            <div class="flex justify-between py-1.5 border-b border-slate-100"><span class="text-slate-500">中文专利</span><span class="font-medium text-slate-700">—</span></div>
-            <div class="flex justify-between py-1.5 border-b border-slate-100"><span class="text-slate-500">英文专利</span><span class="font-medium text-slate-700">—</span></div>
-            <div class="flex justify-between py-1.5"><span class="text-slate-500">扫描件</span><span class="font-medium text-slate-700">—</span></div>
-        </div>
     </div>
 </div>
 
 <!-- Patent Table -->
 <div class="card overflow-hidden">
-    <div class="px-5 py-3.5 border-b border-slate-100">
+    <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
         <h2 class="text-sm font-semibold text-slate-700">专利列表</h2>
+        <span class="text-xs text-slate-400">点击"抽取"开始智能提取技术指标</span>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full data-table">
