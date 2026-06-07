@@ -1,19 +1,34 @@
 """JWT authentication utilities."""
+import hashlib
+import hmac
+import secrets
 from datetime import datetime, timedelta
 from jose import jwt
-from passlib.context import CryptContext
 
 from app.config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    """Hash password using PBKDF2-SHA256 with random salt."""
+    salt = secrets.token_hex(16)
+    dk = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 100000)
+    return f"pbkdf2:sha256:100000${salt}${dk.hex()}"
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    """Verify password against PBKDF2 hash."""
+    try:
+        algo, digest, iterations, rest = hashed.split("$", 3)
+        salt, stored = rest.split("$")
+        dk = hashlib.pbkdf2_hmac(
+            digest.replace("pbkdf2:", ""),
+            plain.encode(),
+            salt.encode(),
+            int(iterations),
+        )
+        return hmac.compare_digest(dk.hex(), stored)
+    except (ValueError, AttributeError):
+        return False
 
 
 def create_access_token(user_id: int, username: str) -> str:

@@ -19,7 +19,10 @@ async def create_task(request: Request, patent_id: int = Query(...), user_id: in
     if _is_htmx(request):
         status = task_manager.get_status(task_id)
         return HTMLResponse(
-            f'<div class="text-green-400 p-2">Task #{task_id} created — Status: {status["status"]}</div>'
+            f'<div class="text-sm bg-blue-50 border border-blue-200 text-blue-700 rounded-lg p-4 mt-2">'
+            f'任务 #{task_id} 已创建 · 状态：<span class="font-medium">{status["status"]}</span> · '
+            f'<a href="/tasks" class="underline font-medium">前往任务页面查看进度</a>'
+            f'</div>'
         )
     return {"task_id": task_id}
 
