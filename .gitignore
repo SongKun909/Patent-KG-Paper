@@ -40,3 +40,4 @@ docs/
 # Private data
 data/
 test.db
+.env

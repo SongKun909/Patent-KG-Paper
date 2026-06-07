@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: patent-kg-db
+    environment:
+      POSTGRES_DB: patent_kg
+      POSTGRES_USER: patent_admin
+      POSTGRES_PASSWORD: patent_kg_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:
