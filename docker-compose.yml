@@ -12,5 +12,20 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
 
+  neo4j:
+    image: neo4j:5-community
+    container_name: patent-kg-neo4j
+    environment:
+      NEO4J_AUTH: neo4j/patent_kg_2026
+    ports:
+      - "7474:7474"   # HTTP (Browser UI)
+      - "7687:7687"   # Bolt (app connection)
+    volumes:
+      - neo4jdata:/data
+      - neo4jlogs:/logs
+    restart: unless-stopped
+
 volumes:
   pgdata:
+  neo4jdata:
+  neo4jlogs:
