@@ -1,0 +1,24 @@
+{% for t in tasks %}
+<div class="bg-gray-750 p-3 rounded mb-2 flex items-center justify-between border border-gray-700">
+    <div class="flex-1">
+        <div class="font-medium">Task #{{ t.id }} — Patent #{{ t.patent_id }}</div>
+        <div class="text-sm text-gray-400">{{ t.current_step or 'pending' }}</div>
+        <div class="w-full bg-gray-600 rounded h-2 mt-1">
+            <div class="bg-blue-500 h-2 rounded progress-bar" style="width: {{ t.progress }}%"></div>
+        </div>
+    </div>
+    <div class="flex items-center gap-2 ml-4">
+        {% set status_colors = {'completed': 'bg-green-600', 'running': 'bg-blue-600', 'failed': 'bg-red-600', 'paused': 'bg-yellow-600', 'cancelled': 'bg-gray-500', 'pending': 'bg-gray-600', 'queued': 'bg-purple-600'} %}
+        <span class="px-2 py-1 rounded text-xs {{ status_colors.get(t.status, 'bg-gray-600') }}">{{ t.status }}</span>
+        {% if t.status in ('running',) %}
+        <button hx-post="/api/tasks/{{ t.id }}/pause" hx-swap="none" class="bg-yellow-600 hover:bg-yellow-700 px-2 py-1 rounded text-xs">Pause</button>
+        <button hx-post="/api/tasks/{{ t.id }}/cancel" hx-swap="none" class="bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-xs">Cancel</button>
+        {% elif t.status == 'paused' %}
+        <button hx-post="/api/tasks/{{ t.id }}/resume" hx-swap="none" class="bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-xs">Resume</button>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+{% if not tasks %}
+<p class="text-gray-500 text-center py-4">No tasks yet. Create one from the Patents page.</p>
+{% endif %}

@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.templating import Jinja2Templates
+from app.templating import templates
 
 # Import all models so Base.metadata knows about them
 from app.models.base import Base
@@ -49,9 +49,6 @@ app.include_router(tasks_router)
 app.include_router(results_router)
 app.include_router(kg_router)
 app.include_router(ws_router)
-
-
-templates = Jinja2Templates(directory="app/templates")
 
 
 @app.get("/")

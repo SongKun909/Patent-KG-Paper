@@ -1,0 +1,17 @@
+{% for p in items %}
+<tr class="border-b border-gray-700 hover:bg-gray-750">
+    <td class="p-2">{{ p.id }}</td>
+    <td class="p-2 max-w-xs truncate" title="{{ p.filename }}">{{ p.filename[:60] }}</td>
+    <td class="p-2"><span class="px-2 py-1 rounded text-xs {% if p.lang == 'zh' %}bg-blue-600{% else %}bg-green-600{% endif %}">{{ 'CN' if p.lang == 'zh' else 'US' }}</span></td>
+    <td class="p-2 text-right">{{ p.page_count }}</td>
+    <td class="p-2 text-right">{{ (p.file_size / 1024) | round | int }} KB</td>
+    <td class="p-2">{{ p.uploaded_at.strftime('%Y-%m-%d') if p.uploaded_at else '' }}</td>
+    <td class="p-2">
+        <button hx-post="/api/tasks/?patent_id={{ p.id }}" hx-target="#taskResult" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs">Extract</button>
+        <button hx-delete="/api/patents/{{ p.id }}" hx-target="closest tr" hx-swap="outerHTML" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-xs ml-1">Del</button>
+    </td>
+</tr>
+{% endfor %}
+{% if not items %}
+<tr><td colspan="7" class="p-4 text-center text-gray-500">No patents yet. Upload one above.</td></tr>
+{% endif %}
