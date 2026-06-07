@@ -112,8 +112,15 @@ def delete_patent(request: Request, patent_id: int, db: Session = Depends(get_db
     patent = db.query(Patent).filter(Patent.id == patent_id).first()
     if not patent:
         raise HTTPException(404, "Patent not found")
+    # Also delete the PDF file from disk
+    file_path = patent.file_path
     db.delete(patent)
     db.commit()
+    try:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+    except OSError:
+        pass  # File already gone or permission issue — not critical
     if _is_htmx(request):
-        return HTMLResponse("")  # Remove the row
-    return {"status": "deleted"}
+        return HTMLResponse("")
+    return {"status": "deleted", "file_removed": True}
