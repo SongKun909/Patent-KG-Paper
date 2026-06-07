@@ -75,9 +75,10 @@ async def upload_patent(
     db.refresh(patent)
     if _is_htmx(request):
         return HTMLResponse(
-            f'<div class="text-green-400 p-2 bg-gray-700 rounded mt-2 text-sm">'
-            f'✅ 上传成功：{patent.filename}（ID: {patent.id}，语言: {"中文" if patent.lang == "zh" else "英文"}）'
-            f'</div>'
+            f'<div class="text-sm text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg p-3 mt-3">'
+            f'上传成功：{patent.filename}（ID: {patent.id}）'
+            f'</div>',
+            headers={"HX-Trigger": "patentUploaded"},
         )
     return PatentResponse.model_validate(patent)
 
