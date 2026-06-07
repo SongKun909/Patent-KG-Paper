@@ -1,37 +1,48 @@
 {% for t in tasks %}
-<div class="bg-gray-750 p-3 rounded mb-2 border border-gray-700">
+<div class="bg-[#0a0e1a] border border-[#172242] rounded-lg p-4 mb-2.5 card-glow">
     <div class="flex items-center justify-between">
-        <div class="flex-1">
-            <div class="font-medium text-sm">任务 #{{ t.id }} — 专利 #{{ t.patent_id }}</div>
-            <div class="text-xs text-gray-400 mt-0.5">
-                {% set step_labels = {'parsing_pdf': '解析PDF', 'filter': '句筛选中', 'extract': '抽取中', 'verify': '验证中', 'integrate': '整合中', 'saving_results': '保存结果', 'pending': '等待中'} %}
-                {{ step_labels.get(t.current_step, t.current_step or '等待中') }}
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="text-xs font-mono text-slate-500">任务 #{{ t.id }}</span>
+                <span class="text-[10px] text-slate-600">|</span>
+                <span class="text-xs font-mono text-slate-500">专利 #{{ t.patent_id }}</span>
+                {% if t.result_count > 0 %}
+                <span class="text-xs text-emerald-400 font-mono ml-auto">{{ t.result_count }} 个五元组</span>
+                {% endif %}
             </div>
-            <div class="w-full bg-gray-600 rounded h-1.5 mt-2">
-                <div class="bg-blue-500 h-1.5 rounded progress-bar" style="width: {{ t.progress }}%"></div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-[#0f1729] rounded-full h-1.5 mb-2 overflow-hidden">
+                <div class="h-1.5 rounded-full progress-bar" style="width: {{ t.progress }}%"></div>
+            </div>
+            <div class="flex items-center gap-3">
+                {% set step_labels = {'parsing_pdf': '解析 PDF', 'filter': '筛选候选句', 'extract': '智能抽取', 'verify': '多维验证', 'integrate': '整合去重', 'saving_results': '保存结果', 'pending': '等待中'} %}
+                <span class="text-[11px] text-slate-500">{{ step_labels.get(t.current_step, t.current_step or '等待中') }}</span>
             </div>
         </div>
-        <div class="flex items-center gap-2 ml-4">
+        <div class="flex items-center gap-2 ml-4 flex-shrink-0">
             {% set status_labels = {'completed': '已完成', 'running': '运行中', 'failed': '失败', 'paused': '已暂停', 'cancelled': '已取消', 'pending': '等待中', 'queued': '排队中'} %}
-            {% set status_colors = {'completed': 'bg-green-600', 'running': 'bg-blue-600', 'failed': 'bg-red-600', 'paused': 'bg-yellow-600', 'cancelled': 'bg-gray-500', 'pending': 'bg-gray-600', 'queued': 'bg-purple-600'} %}
-            <span class="px-2 py-0.5 rounded text-xs whitespace-nowrap {{ status_colors.get(t.status, 'bg-gray-600') }}">{{ status_labels.get(t.status, t.status) }}</span>
-            <span class="text-xs text-gray-400">{{ t.progress }}%</span>
+            {% set status_colors = {'completed': 'bg-emerald-900/50 text-emerald-400 border-emerald-800', 'running': 'bg-cyan-900/50 text-cyan-400 border-cyan-800', 'failed': 'bg-rose-900/50 text-rose-400 border-rose-800', 'paused': 'bg-amber-900/50 text-amber-400 border-amber-800', 'cancelled': 'bg-slate-800 text-slate-500 border-slate-700', 'pending': 'bg-slate-800 text-slate-500 border-slate-700', 'queued': 'bg-violet-900/50 text-violet-400 border-violet-800'} %}
+            <span class="px-2.5 py-1 rounded text-[11px] font-mono border whitespace-nowrap {{ status_colors.get(t.status, 'bg-slate-800 text-slate-500 border-slate-700') }}">{{ status_labels.get(t.status, t.status) }}</span>
+            <span class="text-xs text-slate-600 font-mono w-8 text-right">{{ t.progress }}%</span>
             {% if t.status in ('running',) %}
-            <button hx-post="/api/tasks/{{ t.id }}/pause" hx-swap="none" class="bg-yellow-600 hover:bg-yellow-700 px-2 py-1 rounded text-xs">暂停</button>
-            <button hx-post="/api/tasks/{{ t.id }}/cancel" hx-swap="none" class="bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-xs">取消</button>
+            <button hx-post="/api/tasks/{{ t.id }}/pause" hx-swap="none" class="px-2 py-1 rounded text-[11px] font-medium bg-amber-600/20 hover:bg-amber-600/40 text-amber-400 transition-colors">暂停</button>
+            <button hx-post="/api/tasks/{{ t.id }}/cancel" hx-swap="none" class="px-2 py-1 rounded text-[11px] font-medium bg-rose-600/20 hover:bg-rose-600/40 text-rose-400 transition-colors">取消</button>
             {% elif t.status == 'paused' %}
-            <button hx-post="/api/tasks/{{ t.id }}/resume" hx-swap="none" class="bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-xs">继续</button>
+            <button hx-post="/api/tasks/{{ t.id }}/resume" hx-swap="none" class="px-2 py-1 rounded text-[11px] font-medium bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 transition-colors">继续</button>
+            {% elif t.status == 'failed' %}
+            <button hx-post="/api/tasks/?patent_id={{ t.patent_id }}" hx-swap="none" class="px-2 py-1 rounded text-[11px] font-medium bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-400 transition-colors">重试</button>
             {% endif %}
         </div>
     </div>
     {% if t.error_message %}
-    <div class="mt-2 p-2 bg-red-900/50 rounded text-xs text-red-300">{{ t.error_message[:200] }}</div>
-    {% endif %}
-    {% if t.result_count > 0 %}
-    <div class="mt-1 text-xs text-green-400">已抽取 {{ t.result_count }} 个五元组</div>
+    <div class="mt-3 p-2.5 bg-rose-900/20 border border-rose-900/40 rounded-lg text-[11px] text-rose-400 font-mono">{{ t.error_message[:300] }}</div>
     {% endif %}
 </div>
 {% endfor %}
 {% if not tasks %}
-<p class="text-gray-500 text-center py-4 text-sm">暂无任务，请先在专利管理页面创建抽取任务</p>
+<div class="flex flex-col items-center justify-center py-12">
+    <svg class="w-10 h-10 text-slate-700 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    <p class="text-sm text-slate-600">暂无任务</p>
+    <p class="text-xs text-slate-700 mt-1 font-mono">在专利管理页面创建抽取任务</p>
+</div>
 {% endif %}

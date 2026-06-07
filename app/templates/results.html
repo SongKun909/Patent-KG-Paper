@@ -1,21 +1,52 @@
 {% extends "base.html" %}
 {% block title %}抽取结果 — Patent-KG{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-bold mb-6">📋 抽取结果</h1>
 
-<div class="bg-gray-800 p-4 rounded-lg mb-6">
-    <div class="flex gap-4 mb-4 items-end">
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-white tracking-tight">抽取结果</h1>
+    <p class="text-sm text-slate-500 mt-1 font-mono">浏览 · 筛选 · 导出技术指标五元组</p>
+</div>
+
+<!-- Filter Bar -->
+<div class="bg-[#0f1729] border border-[#172242] rounded-xl p-5 mb-6">
+    <div class="flex items-end gap-4">
         <div class="flex-1">
-            <label class="block text-sm mb-1 text-gray-400">按指标名称筛选</label>
-            <input type="text" name="name" placeholder="例如：能量密度、比容量..."
-                   hx-get="/api/results/" hx-trigger="keyup changed delay:500ms"
-                   hx-target="#resultsTable" hx-include="[name='name']"
-                   class="w-full p-2.5 rounded bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-500">
+            <label class="block text-xs text-slate-500 mb-1.5 font-mono">按指标名称筛选</label>
+            <div class="relative">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+                <input type="text" name="name" placeholder="能量密度、比容量、循环寿命..."
+                       hx-get="/api/results/" hx-trigger="keyup changed delay:500ms"
+                       hx-target="#resultsTable" hx-include="[name='name']"
+                       class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#0a0e1a] border border-[#1c2a4f] text-slate-200 text-sm placeholder-slate-600 focus:border-cyan-700 focus:outline-none transition-colors">
+            </div>
         </div>
-        <a href="/api/results/export" class="bg-green-600 hover:bg-green-700 px-4 py-2.5 rounded text-sm text-center whitespace-nowrap">📥 导出 CSV</a>
-    </div>
-    <div hx-get="/api/results/?per_page=50" hx-trigger="load" hx-target="#resultsTable">
-        <div id="resultsTable" class="text-gray-400 text-sm">加载中...</div>
+        <a href="/api/results/export"
+           class="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-colors whitespace-nowrap">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+            导出 CSV
+        </a>
     </div>
 </div>
+
+<!-- Results Table -->
+<div class="bg-[#0f1729] border border-[#172242] rounded-xl overflow-hidden">
+    <div class="px-5 py-4 border-b border-[#172242] flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+            <span class="w-1.5 h-4 bg-violet-500 rounded-full"></span>技术指标五元组
+        </h2>
+    </div>
+    <div class="overflow-x-auto">
+        <div hx-get="/api/results/?per_page=50" hx-trigger="load" hx-target="#resultsTable">
+            <div id="resultsTable">
+                <div class="flex items-center justify-center py-16">
+                    <div class="flex flex-col items-center gap-3">
+                        <svg class="w-6 h-6 text-slate-600 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        <span class="text-xs text-slate-600 font-mono">加载抽取结果...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
