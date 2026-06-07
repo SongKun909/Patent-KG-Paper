@@ -38,11 +38,15 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 from app.routes.auth import router as auth_router
 from app.routes.patents import router as patents_router
 from app.routes.tasks import router as tasks_router
+from app.routes.results import router as results_router
+from app.routes.kg import router as kg_router
 from app.ws.progress import router as ws_router
 
 app.include_router(auth_router)
 app.include_router(patents_router)
 app.include_router(tasks_router)
+app.include_router(results_router)
+app.include_router(kg_router)
 app.include_router(ws_router)
 
 
