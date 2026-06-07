@@ -69,7 +69,6 @@
         <table class="w-full data-table">
             <thead>
                 <tr>
-                    <th class="p-3 text-left w-16">ID</th>
                     <th class="p-3 text-left">文件名</th>
                     <th class="p-3 text-left w-16">语言</th>
                     <th class="p-3 text-right w-16">页数</th>
@@ -79,7 +78,7 @@
                 </tr>
             </thead>
             <tbody id="patentTableBody" hx-get="/api/patents/?per_page=20" hx-trigger="load, patentUploaded from:document" hx-target="this" hx-swap="innerHTML">
-                <tr><td colspan="7" class="p-8 text-center text-sm text-slate-400">加载中...</td></tr>
+                <tr><td colspan="6" class="p-8 text-center text-sm text-slate-400">加载中...</td></tr>
             </tbody>
         </table>
     </div>

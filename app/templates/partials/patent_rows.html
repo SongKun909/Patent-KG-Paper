@@ -1,7 +1,6 @@
 {% for p in items %}
 <tr>
-    <td class="p-3 text-sm text-slate-500">{{ p.id }}</td>
-    <td class="p-3 max-w-xs truncate text-sm text-slate-700" title="{{ p.filename }}">{{ p.filename[:50] }}{% if p.filename|length > 50 %}...{% endif %}</td>
+    <td class="p-3 max-w-xs truncate text-sm text-slate-700" title="{{ p.filename }}">{{ p.filename[:55] }}{% if p.filename|length > 55 %}...{% endif %}</td>
     <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-medium {% if p.lang == 'zh' %}bg-blue-50 text-blue-700{% else %}bg-emerald-50 text-emerald-700{% endif %}">{{ '中文' if p.lang == 'zh' else '英文' }}</span></td>
     <td class="p-3 text-right text-sm text-slate-500">{{ p.page_count }}</td>
     <td class="p-3 text-right text-sm text-slate-500">{{ (p.file_size / 1024) | round | int }} KB</td>
@@ -15,5 +14,5 @@
 </tr>
 {% endfor %}
 {% if not items %}
-<tr><td colspan="7" class="p-10 text-center text-sm text-slate-400">暂无专利文献</td></tr>
+<tr><td colspan="6" class="p-10 text-center text-sm text-slate-400">暂无专利文献</td></tr>
 {% endif %}
