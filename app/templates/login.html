@@ -1,18 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Login — Patent-KG{% endblock %}
+{% block title %}登录 — Patent-KG{% endblock %}
 {% block content %}
 <div class="max-w-md mx-auto mt-20">
-    <h1 class="text-2xl font-bold mb-6">Login</h1>
+    <h1 class="text-2xl font-bold mb-6">🔐 登录</h1>
     <form hx-post="/api/auth/login" hx-target="#loginResult" class="bg-gray-800 p-6 rounded-lg">
         <div class="mb-4">
-            <label class="block text-sm mb-1">Username</label>
-            <input type="text" name="username" required class="w-full p-2 rounded bg-gray-700 border border-gray-600">
+            <label class="block text-sm mb-1 text-gray-300">用户名</label>
+            <input type="text" name="username" required class="w-full p-2.5 rounded bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-500" placeholder="请输入用户名">
         </div>
         <div class="mb-4">
-            <label class="block text-sm mb-1">Password</label>
-            <input type="password" name="password" required class="w-full p-2 rounded bg-gray-700 border border-gray-600">
+            <label class="block text-sm mb-1 text-gray-300">密码</label>
+            <input type="password" name="password" required class="w-full p-2.5 rounded bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-500" placeholder="请输入密码">
         </div>
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded font-medium">Login</button>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 py-2.5 rounded font-medium">登 录</button>
     </form>
     <div id="loginResult" class="mt-4"></div>
 </div>

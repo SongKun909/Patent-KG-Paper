@@ -1,24 +1,37 @@
 {% for t in tasks %}
-<div class="bg-gray-750 p-3 rounded mb-2 flex items-center justify-between border border-gray-700">
-    <div class="flex-1">
-        <div class="font-medium">Task #{{ t.id }} — Patent #{{ t.patent_id }}</div>
-        <div class="text-sm text-gray-400">{{ t.current_step or 'pending' }}</div>
-        <div class="w-full bg-gray-600 rounded h-2 mt-1">
-            <div class="bg-blue-500 h-2 rounded progress-bar" style="width: {{ t.progress }}%"></div>
+<div class="bg-gray-750 p-3 rounded mb-2 border border-gray-700">
+    <div class="flex items-center justify-between">
+        <div class="flex-1">
+            <div class="font-medium text-sm">任务 #{{ t.id }} — 专利 #{{ t.patent_id }}</div>
+            <div class="text-xs text-gray-400 mt-0.5">
+                {% set step_labels = {'parsing_pdf': '解析PDF', 'filter': '句筛选中', 'extract': '抽取中', 'verify': '验证中', 'integrate': '整合中', 'saving_results': '保存结果', 'pending': '等待中'} %}
+                {{ step_labels.get(t.current_step, t.current_step or '等待中') }}
+            </div>
+            <div class="w-full bg-gray-600 rounded h-1.5 mt-2">
+                <div class="bg-blue-500 h-1.5 rounded progress-bar" style="width: {{ t.progress }}%"></div>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 ml-4">
+            {% set status_labels = {'completed': '已完成', 'running': '运行中', 'failed': '失败', 'paused': '已暂停', 'cancelled': '已取消', 'pending': '等待中', 'queued': '排队中'} %}
+            {% set status_colors = {'completed': 'bg-green-600', 'running': 'bg-blue-600', 'failed': 'bg-red-600', 'paused': 'bg-yellow-600', 'cancelled': 'bg-gray-500', 'pending': 'bg-gray-600', 'queued': 'bg-purple-600'} %}
+            <span class="px-2 py-0.5 rounded text-xs whitespace-nowrap {{ status_colors.get(t.status, 'bg-gray-600') }}">{{ status_labels.get(t.status, t.status) }}</span>
+            <span class="text-xs text-gray-400">{{ t.progress }}%</span>
+            {% if t.status in ('running',) %}
+            <button hx-post="/api/tasks/{{ t.id }}/pause" hx-swap="none" class="bg-yellow-600 hover:bg-yellow-700 px-2 py-1 rounded text-xs">暂停</button>
+            <button hx-post="/api/tasks/{{ t.id }}/cancel" hx-swap="none" class="bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-xs">取消</button>
+            {% elif t.status == 'paused' %}
+            <button hx-post="/api/tasks/{{ t.id }}/resume" hx-swap="none" class="bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-xs">继续</button>
+            {% endif %}
         </div>
     </div>
-    <div class="flex items-center gap-2 ml-4">
-        {% set status_colors = {'completed': 'bg-green-600', 'running': 'bg-blue-600', 'failed': 'bg-red-600', 'paused': 'bg-yellow-600', 'cancelled': 'bg-gray-500', 'pending': 'bg-gray-600', 'queued': 'bg-purple-600'} %}
-        <span class="px-2 py-1 rounded text-xs {{ status_colors.get(t.status, 'bg-gray-600') }}">{{ t.status }}</span>
-        {% if t.status in ('running',) %}
-        <button hx-post="/api/tasks/{{ t.id }}/pause" hx-swap="none" class="bg-yellow-600 hover:bg-yellow-700 px-2 py-1 rounded text-xs">Pause</button>
-        <button hx-post="/api/tasks/{{ t.id }}/cancel" hx-swap="none" class="bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-xs">Cancel</button>
-        {% elif t.status == 'paused' %}
-        <button hx-post="/api/tasks/{{ t.id }}/resume" hx-swap="none" class="bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-xs">Resume</button>
-        {% endif %}
-    </div>
+    {% if t.error_message %}
+    <div class="mt-2 p-2 bg-red-900/50 rounded text-xs text-red-300">{{ t.error_message[:200] }}</div>
+    {% endif %}
+    {% if t.result_count > 0 %}
+    <div class="mt-1 text-xs text-green-400">已抽取 {{ t.result_count }} 个五元组</div>
+    {% endif %}
 </div>
 {% endfor %}
 {% if not tasks %}
-<p class="text-gray-500 text-center py-4">No tasks yet. Create one from the Patents page.</p>
+<p class="text-gray-500 text-center py-4 text-sm">暂无任务，请先在专利管理页面创建抽取任务</p>
 {% endif %}

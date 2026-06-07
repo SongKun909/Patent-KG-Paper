@@ -1,35 +1,39 @@
 {% extends "base.html" %}
-{% block title %}Knowledge Graph — Patent-KG{% endblock %}
+{% block title %}知识图谱 — Patent-KG{% endblock %}
 {% block content %}
-<h1 class="text-3xl font-bold mb-6">Knowledge Graph</h1>
+<h1 class="text-2xl font-bold mb-6">🕸️ 知识图谱</h1>
 
+<!-- 搜索 -->
 <div class="bg-gray-800 p-4 rounded-lg mb-6">
-    <div class="flex gap-4 mb-4">
-        <input type="text" name="keyword" placeholder="Search indicators..."
-               hx-get="/api/kg/search" hx-trigger="keyup changed delay:500ms"
-               hx-target="#kgSearchResult"
-               class="p-2 rounded bg-gray-700 border border-gray-600 flex-1">
+    <div class="flex gap-4 items-end">
+        <div class="flex-1">
+            <label class="block text-sm mb-1 text-gray-400">搜索技术指标</label>
+            <input type="text" name="keyword" placeholder="输入指标名称或对象..."
+                   hx-get="/api/kg/search" hx-trigger="keyup changed delay:500ms"
+                   hx-target="#kgSearchResult"
+                   class="w-full p-2.5 rounded bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-500">
+        </div>
     </div>
-    <div id="kgSearchResult"></div>
+    <div id="kgSearchResult" class="mt-3"></div>
 </div>
 
-<!-- Graph Viewer -->
+<!-- 图谱可视化 -->
 <div class="bg-gray-800 p-4 rounded-lg mb-6">
-    <h2 class="text-lg font-semibold mb-3">Interactive Graph</h2>
+    <h2 class="text-lg font-semibold mb-3">交互式图谱</h2>
     <div hx-get="/api/kg/visualize?limit=50" hx-trigger="load" hx-target="#graphContainer">
-        <div id="graphContainer" class="text-gray-400">Loading graph...</div>
+        <div id="graphContainer" class="text-gray-400 text-sm">图谱加载中...</div>
     </div>
 </div>
 
-<!-- PageRank + Pearson panels -->
+<!-- PageRank + Pearson -->
 <div class="grid grid-cols-2 gap-6">
     <div class="bg-gray-800 p-4 rounded-lg" hx-get="/api/kg/pagerank" hx-trigger="load">
-        <h2 class="text-lg font-semibold mb-3">Top Indicators (PageRank)</h2>
-        <p class="text-gray-400">Loading...</p>
+        <h2 class="text-lg font-semibold mb-3">🏆 核心指标排名（PageRank）</h2>
+        <p class="text-gray-400 text-sm">加载中...</p>
     </div>
     <div class="bg-gray-800 p-4 rounded-lg" hx-get="/api/kg/pearson" hx-trigger="load">
-        <h2 class="text-lg font-semibold mb-3">Indicator Correlations (Pearson)</h2>
-        <p class="text-gray-400">Loading...</p>
+        <h2 class="text-lg font-semibold mb-3">📈 指标关联分析（Pearson）</h2>
+        <p class="text-gray-400 text-sm">加载中...</p>
     </div>
 </div>
 {% endblock %}

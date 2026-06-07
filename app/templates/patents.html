@@ -1,33 +1,42 @@
 {% extends "base.html" %}
-{% block title %}Patents — Patent-KG{% endblock %}
+{% block title %}专利管理 — Patent-KG{% endblock %}
 {% block content %}
-<h1 class="text-3xl font-bold mb-6">Patent Management</h1>
+<h1 class="text-2xl font-bold mb-6">📄 专利管理</h1>
 
-<!-- Upload -->
+<!-- 上传专利 -->
 <div class="bg-gray-800 p-4 rounded-lg mb-6">
-    <h2 class="text-lg font-semibold mb-3">Upload New Patent</h2>
+    <h2 class="text-lg font-semibold mb-3">上传新专利</h2>
     <form hx-post="/api/patents/upload" hx-encoding="multipart/form-data" hx-target="#uploadResult" hx-swap="afterbegin">
-        <input type="file" name="file" accept=".pdf" required class="mb-3 text-sm">
-        <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Upload</button>
+        <input type="file" name="file" accept=".pdf" required class="mb-3 text-sm text-gray-300 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-blue-600 file:text-white file:text-sm file:cursor-pointer">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm">上传</button>
     </form>
     <div id="uploadResult"></div>
 </div>
 
-<!-- Bulk Import -->
+<!-- 批量导入 -->
 <div class="bg-gray-800 p-4 rounded-lg mb-6">
-    <h2 class="text-lg font-semibold mb-3">Bulk Import from Directory</h2>
+    <h2 class="text-lg font-semibold mb-3">批量导入（从服务器目录）</h2>
     <form hx-post="/api/patents/import" hx-target="#importResult">
-        <input type="text" name="directory" placeholder="e.g., data/pdfs/CN" class="w-full p-2 rounded bg-gray-700 border border-gray-600 mb-3">
-        <button type="submit" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">Import</button>
+        <input type="text" name="directory" placeholder="例如：data/pdfs/CN" class="w-full p-2.5 rounded bg-gray-700 border border-gray-600 mb-3 text-gray-100 placeholder-gray-500">
+        <button type="submit" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm">批量导入</button>
     </form>
-    <div id="importResult" class="mt-3"></div>
+    <div id="importResult" class="mt-3 text-sm"></div>
 </div>
 
-<!-- Patent List -->
+<!-- 专利列表 -->
 <div class="bg-gray-800 p-4 rounded-lg">
-    <h2 class="text-lg font-semibold mb-3">Patent List</h2>
-    <div hx-get="/api/patents/?per_page=20" hx-trigger="load" hx-target="#patentTable">
-        <div id="patentTable" class="text-gray-400">Loading...</div>
-    </div>
+    <h2 class="text-lg font-semibold mb-3">专利列表</h2>
+    <table class="w-full text-sm" id="patentTableContainer">
+        <thead>
+            <tr class="border-b border-gray-600 text-left text-gray-400">
+                <th class="p-2">ID</th><th class="p-2">文件名</th><th class="p-2">语言</th>
+                <th class="p-2 text-right">页数</th><th class="p-2 text-right">大小</th>
+                <th class="p-2">上传日期</th><th class="p-2">操作</th>
+            </tr>
+        </thead>
+        <tbody hx-get="/api/patents/?per_page=20" hx-trigger="load" hx-target="this" hx-swap="innerHTML">
+            <tr><td colspan="7" class="p-4 text-center text-gray-500">加载中...</td></tr>
+        </tbody>
+    </table>
 </div>
 {% endblock %}

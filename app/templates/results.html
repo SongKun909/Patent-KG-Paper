@@ -1,18 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Results — Patent-KG{% endblock %}
+{% block title %}抽取结果 — Patent-KG{% endblock %}
 {% block content %}
-<h1 class="text-3xl font-bold mb-6">Extraction Results</h1>
+<h1 class="text-2xl font-bold mb-6">📋 抽取结果</h1>
 
 <div class="bg-gray-800 p-4 rounded-lg mb-6">
-    <div class="flex gap-4 mb-4">
-        <input type="text" name="name" placeholder="Filter by indicator name..."
-               hx-get="/api/results/" hx-trigger="keyup changed delay:500ms"
-               hx-target="#resultsTable" hx-include="[name='name']"
-               class="p-2 rounded bg-gray-700 border border-gray-600 flex-1">
-        <a href="/api/results/export" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-center">Export CSV</a>
+    <div class="flex gap-4 mb-4 items-end">
+        <div class="flex-1">
+            <label class="block text-sm mb-1 text-gray-400">按指标名称筛选</label>
+            <input type="text" name="name" placeholder="例如：能量密度、比容量..."
+                   hx-get="/api/results/" hx-trigger="keyup changed delay:500ms"
+                   hx-target="#resultsTable" hx-include="[name='name']"
+                   class="w-full p-2.5 rounded bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-500">
+        </div>
+        <a href="/api/results/export" class="bg-green-600 hover:bg-green-700 px-4 py-2.5 rounded text-sm text-center whitespace-nowrap">📥 导出 CSV</a>
     </div>
     <div hx-get="/api/results/?per_page=50" hx-trigger="load" hx-target="#resultsTable">
-        <div id="resultsTable" class="text-gray-400">Loading...</div>
+        <div id="resultsTable" class="text-gray-400 text-sm">加载中...</div>
     </div>
 </div>
 {% endblock %}
