@@ -37,3 +37,8 @@ def get_db() -> Session:
         yield db
     finally:
         db.close()
+
+
+def new_session() -> Session:
+    """Create a new session for background tasks (non-request)."""
+    return _get_sessionmaker()()
