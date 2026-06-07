@@ -2,57 +2,34 @@
 {% block title %}工作台 — Patent-KG{% endblock %}
 {% block content %}
 
-<!-- Header -->
-<div class="mb-8">
-    <h1 class="text-2xl font-bold text-white tracking-tight">工作台</h1>
-    <p class="text-sm text-slate-500 mt-1 font-mono">Patent Knowledge Graph · 专利技术指标智能抽取系统</p>
-</div>
+<h1 class="text-xl font-semibold text-slate-800 mb-1">工作台</h1>
+<p class="text-sm text-slate-500 mb-8">专利技术指标智能抽取与知识图谱系统</p>
 
-<!-- Stat Cards -->
+<!-- Stats -->
 <div class="grid grid-cols-4 gap-4 mb-8">
-    {% set stats = [
-        ('专利总数', '—', 'text-cyan-400', 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z'),
-        ('已完成', '—', 'text-emerald-400', 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'),
-        ('运行中', '—', 'text-amber-400', 'M5.25 5.653c-.687.589-1.125 1.435-1.125 2.347 0 1.874 1.465 3.377 3.337 3.377.94 0 1.875-.395 2.536-1.056l4.504-4.504c.666-.666 1.61-1.069 2.56-1.069 1.875 0 3.338 1.503 3.338 3.377 0 .912-.438 1.758-1.125 2.347'),
-        ('五元组', '—', 'text-violet-400', 'M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v5.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125v-5.25m16.5 0v5.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125v-5.25'),
-    ] %}
-    {% for label, value, color, icon in stats %}
-    <div class="bg-[#0f1729] border border-[#172242] rounded-xl p-5 card-glow">
-        <div class="flex items-center justify-between mb-3">
-            <span class="text-xs text-slate-500 font-mono uppercase tracking-wider">{{ label }}</span>
-            <svg class="w-4 h-4 {{ color }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="{{ icon }}"/>
-            </svg>
-        </div>
-        <div class="text-3xl font-bold {{ color }} font-mono tracking-tight">{{ value }}</div>
+    {% set stats = [('专利总数', '—', 'text-blue-600'), ('已完成任务', '—', 'text-emerald-600'), ('运行中', '—', 'text-amber-600'), ('五元组数量', '—', 'text-violet-600')] %}
+    {% for label, value, color in stats %}
+    <div class="card p-5">
+        <div class="text-xs text-slate-500 mb-1.5">{{ label }}</div>
+        <div class="text-2xl font-semibold {{ color }}">{{ value }}</div>
     </div>
     {% endfor %}
 </div>
 
-<!-- Two Column Layout -->
 <div class="grid grid-cols-5 gap-6">
     <!-- Quick Actions -->
-    <div class="col-span-2 space-y-4">
-        <div class="bg-[#0f1729] border border-[#172242] rounded-xl p-5">
-            <h2 class="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
-                <span class="w-1.5 h-4 bg-cyan-500 rounded-full"></span>快捷操作
-            </h2>
+    <div class="col-span-2 space-y-3">
+        <div class="card p-5">
+            <h2 class="text-sm font-semibold text-slate-700 mb-4">快捷操作</h2>
             <div class="space-y-2">
-                {% set actions = [
-                    ('/patents', '📄', '上传专利 PDF', '添加新的专利文献到系统'),
-                    ('/tasks', '⚡', '创建抽取任务', '对已上传专利启动智能抽取'),
-                    ('/results', '🔍', '浏览抽取结果', '查看和导出技术指标五元组'),
-                    ('/kg', '🕸️', '探索知识图谱', '交互式浏览专利指标关系网络'),
-                ] %}
-                {% for href, emoji, title, desc in actions %}
-                <a href="{{ href }}"
-                   class="flex items-center gap-4 p-3.5 rounded-lg border border-[#172242] hover:border-cyan-800/50 hover:bg-[#131d33] transition-all duration-200 group">
-                    <span class="text-lg flex-shrink-0">{{ emoji }}</span>
+                {% set actions = [('/patents', '上传专利 PDF', '添加新专利文献'), ('/tasks', '创建抽取任务', '启动智能抽取流程'), ('/results', '浏览抽取结果', '查看五元组数据'), ('/kg', '探索知识图谱', '交互式关系网络')] %}
+                {% for href, title, desc in actions %}
+                <a href="{{ href }}" class="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/50 transition-colors group">
                     <div>
-                        <div class="text-sm font-medium text-slate-200 group-hover:text-cyan-300 transition-colors">{{ title }}</div>
-                        <div class="text-xs text-slate-500 mt-0.5">{{ desc }}</div>
+                        <div class="text-sm font-medium text-slate-700 group-hover:text-blue-700">{{ title }}</div>
+                        <div class="text-xs text-slate-400 mt-0.5">{{ desc }}</div>
                     </div>
-                    <svg class="w-4 h-4 text-slate-600 group-hover:text-cyan-400 ml-auto transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                    <svg class="w-4 h-4 text-slate-300 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
                 </a>
                 {% endfor %}
             </div>
@@ -61,20 +38,13 @@
 
     <!-- Recent Tasks -->
     <div class="col-span-3">
-        <div class="bg-[#0f1729] border border-[#172242] rounded-xl p-5 h-full">
+        <div class="card p-5 h-full">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
-                    <span class="w-1.5 h-4 bg-emerald-500 rounded-full"></span>最近任务
-                </h2>
-                <span class="text-[10px] text-slate-600 font-mono">每 10 秒自动刷新</span>
+                <h2 class="text-sm font-semibold text-slate-700">最近任务</h2>
+                <span class="text-xs text-slate-400">自动刷新</span>
             </div>
             <div hx-get="/api/tasks/" hx-trigger="every 10s" hx-swap="innerHTML">
-                <div class="flex items-center justify-center py-12">
-                    <div class="flex flex-col items-center gap-3">
-                        <svg class="w-6 h-6 text-slate-600 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                        <span class="text-xs text-slate-600 font-mono">加载任务列表...</span>
-                    </div>
-                </div>
+                <p class="text-sm text-slate-400 py-8 text-center">加载中...</p>
             </div>
         </div>
     </div>

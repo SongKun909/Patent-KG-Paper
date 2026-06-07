@@ -2,42 +2,29 @@
 {% block title %}知识图谱 — Patent-KG{% endblock %}
 {% block content %}
 
-<div class="mb-8">
-    <h1 class="text-2xl font-bold text-white tracking-tight">知识图谱</h1>
-    <p class="text-sm text-slate-500 mt-1 font-mono">探索 · 检索 · 分析专利技术指标关系网络</p>
-</div>
+<h1 class="text-xl font-semibold text-slate-800 mb-1">知识图谱</h1>
+<p class="text-sm text-slate-500 mb-8">探索和分析专利技术指标关系网络</p>
 
-<!-- Search + Graph -->
 <div class="grid grid-cols-4 gap-6 mb-6">
-    <!-- Search Panel -->
-    <div class="col-span-1 bg-[#0f1729] border border-[#172242] rounded-xl p-5 card-glow">
-        <h2 class="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
-            <span class="w-1.5 h-4 bg-cyan-500 rounded-full"></span>检索指标
-        </h2>
-        <div class="relative mb-4">
-            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
-            <input type="text" name="keyword" placeholder="搜索指标名称..."
-                   hx-get="/api/kg/search" hx-trigger="keyup changed delay:500ms"
-                   hx-target="#kgSearchResult"
-                   class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#0a0e1a] border border-[#1c2a4f] text-slate-200 text-sm placeholder-slate-600 focus:border-cyan-700 focus:outline-none transition-colors">
-        </div>
-        <div id="kgSearchResult" class="max-h-64 overflow-y-auto space-y-1 text-xs"></div>
+    <!-- Search -->
+    <div class="col-span-1 card p-5">
+        <h2 class="text-sm font-semibold text-slate-700 mb-4">检索指标</h2>
+        <input type="text" name="keyword" placeholder="搜索指标名称..."
+               hx-get="/api/kg/search" hx-trigger="keyup changed delay:500ms"
+               hx-target="#kgSearchResult"
+               class="w-full p-2.5 rounded-lg border border-slate-200 text-sm focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none transition-colors mb-3">
+        <div id="kgSearchResult" class="max-h-64 overflow-y-auto text-xs space-y-1"></div>
     </div>
 
     <!-- Graph -->
-    <div class="col-span-3 bg-[#0f1729] border border-[#172242] rounded-xl overflow-hidden">
-        <div class="px-5 py-3 border-b border-[#172242] flex items-center justify-between">
-            <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
-                <span class="w-1.5 h-4 bg-violet-500 rounded-full"></span>交互式图谱
-            </h2>
-            <span class="text-[10px] text-slate-600 font-mono">pyvis · 可拖拽缩放</span>
+    <div class="col-span-3 card overflow-hidden">
+        <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+            <h2 class="text-sm font-semibold text-slate-700">交互式图谱</h2>
+            <span class="text-xs text-slate-400">可拖拽缩放</span>
         </div>
         <div hx-get="/api/kg/visualize?limit=50" hx-trigger="load" hx-target="#graphContainer">
-            <div id="graphContainer" class="h-[500px] flex items-center justify-center">
-                <div class="flex flex-col items-center gap-3">
-                    <svg class="w-6 h-6 text-slate-600 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                    <span class="text-xs text-slate-600 font-mono">加载图谱...</span>
-                </div>
+            <div id="graphContainer" class="h-[480px] flex items-center justify-center">
+                <p class="text-sm text-slate-400">加载图谱...</p>
             </div>
         </div>
     </div>
@@ -45,26 +32,16 @@
 
 <!-- PageRank + Pearson -->
 <div class="grid grid-cols-2 gap-6">
-    <div class="bg-[#0f1729] border border-[#172242] rounded-xl p-5">
-        <h2 class="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
-            <span class="w-1.5 h-4 bg-amber-500 rounded-full"></span>核心指标排名
-            <span class="text-[10px] text-slate-600 font-mono ml-2">PageRank</span>
-        </h2>
+    <div class="card p-5">
+        <h2 class="text-sm font-semibold text-slate-700 mb-4">核心指标排名 <span class="text-xs font-normal text-slate-400 ml-1">PageRank</span></h2>
         <div hx-get="/api/kg/pagerank" hx-trigger="load" hx-target="this" hx-swap="innerHTML">
-            <div class="flex items-center justify-center py-12">
-                <span class="text-xs text-slate-600 font-mono">加载中...</span>
-            </div>
+            <p class="text-sm text-slate-400 py-6 text-center">加载中...</p>
         </div>
     </div>
-    <div class="bg-[#0f1729] border border-[#172242] rounded-xl p-5">
-        <h2 class="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
-            <span class="w-1.5 h-4 bg-rose-500 rounded-full"></span>指标关联分析
-            <span class="text-[10px] text-slate-600 font-mono ml-2">Pearson</span>
-        </h2>
+    <div class="card p-5">
+        <h2 class="text-sm font-semibold text-slate-700 mb-4">指标关联分析 <span class="text-xs font-normal text-slate-400 ml-1">Pearson</span></h2>
         <div hx-get="/api/kg/pearson" hx-trigger="load" hx-target="this" hx-swap="innerHTML">
-            <div class="flex items-center justify-center py-12">
-                <span class="text-xs text-slate-600 font-mono">加载中...</span>
-            </div>
+            <p class="text-sm text-slate-400 py-6 text-center">加载中...</p>
         </div>
     </div>
 </div>
