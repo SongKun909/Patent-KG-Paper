@@ -78,7 +78,7 @@ async def upload_patent(
             f'<div class="text-sm text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-lg p-3 mt-3">'
             f'上传成功：{patent.filename}（ID: {patent.id}）'
             f'</div>',
-            headers={"HX-Trigger": "patentUploaded"},
+            headers={"HX-Trigger": '{"patentUploaded": {"target": "document"}}'},
         )
     return PatentResponse.model_validate(patent)
 

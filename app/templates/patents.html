@@ -78,7 +78,7 @@
                     <th class="p-3 text-left w-28">操作</th>
                 </tr>
             </thead>
-            <tbody hx-get="/api/patents/?per_page=20" hx-trigger="load, patentUploaded from:body" hx-target="this" hx-swap="innerHTML">
+            <tbody id="patentTableBody" hx-get="/api/patents/?per_page=20" hx-trigger="load, patentUploaded from:document" hx-target="this" hx-swap="innerHTML">
                 <tr><td colspan="7" class="p-8 text-center text-sm text-slate-400">加载中...</td></tr>
             </tbody>
         </table>
